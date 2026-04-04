@@ -25,11 +25,11 @@
       /* Canali */
       --booking:        #0057a8;
       --booking-fat:    #003d7a;
-      --cash:           #52525b;
-      --fat-kevin:      #059669;
-      --fat-miguel:     #b45309;
-      --cor-kevin:      #0891b2;
-      --cor-miguel:     #7c3aed;
+      --cash:           #16a34a;
+      --fat-kevin:      #ea580c;
+      --fat-miguel:     #ea580c;
+      --cor-kevin:      #18181b;
+      --cor-miguel:     #18181b;
 
       /* Sezioni */
       --arrivo:   #16a34a;
@@ -970,6 +970,7 @@ function renderCard(b) {
   // KMI badge
   var kmiVal = (b.kmi || '-').toUpperCase();
   var kmiBadge = '<span class="kmi-badge kmi-' + kmiVal + '">' + kmiVal + '</span>';
+  var parkBadge = b.park ? '<span class="kmi-badge" style="background:#e0f2fe;color:#0369a1;font-size:.7rem;font-weight:800">P</span>' : '';
 
   // Righe info
   var infoItems = [];
@@ -1042,11 +1043,9 @@ function renderCard(b) {
   }
 
   // Servizi
+  // Servizi (solo taxi rimane in fondo)
   var serviziHTML = '';
-  var servizi = [];
-  if (b.taxi) servizi.push('<span class="service-tag">🚕 Taxi</span>');
-  if (b.park) servizi.push('<span class="service-tag">🅿️ Parcheggio</span>');
-  if (servizi.length) serviziHTML = '<div class="services">' + servizi.join('') + '</div>';
+  if (b.taxi) serviziHTML = '<div class="services"><span class="service-tag">🚕 Taxi</span></div>';
 
   // Note
   var noteHTML = '';
@@ -1058,6 +1057,7 @@ function renderCard(b) {
     '<div class="card-top">' +
       '<span class="canale-badge ' + canaleCls + '">' + canaleLabel + '</span>' +
       kmiBadge +
+      parkBadge +
       '<span class="room-label">🛏️ ' + escapeHtml(String(b.camera)) + '</span>' +
     '</div>' +
     '<div class="guest-name">' + escapeHtml(b.nome) + '</div>' +
