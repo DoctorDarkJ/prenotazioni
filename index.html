@@ -1045,8 +1045,7 @@ function renderCard(b) {
   var serviziHTML = '';
   var servizi = [];
   if (b.taxi) servizi.push('<span class="service-tag">🚕 Taxi</span>');
-  if (parkN > 0) servizi.push('<span class="service-tag">🅿️ ' + formatEuro(parkN) + '</span>');
-  else if (b.park) servizi.push('<span class="service-tag">🅿️ Parcheggio</span>');
+  if (b.park) servizi.push('<span class="service-tag">🅿️ Parcheggio</span>');
   if (servizi.length) serviziHTML = '<div class="services">' + servizi.join('') + '</div>';
 
   // Note
