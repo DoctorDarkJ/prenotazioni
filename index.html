@@ -33,8 +33,8 @@
 
       /* Sezioni */
       --arrivo:   #16a34a;
-      --partenza: #dc2626;
-      --presente: #2563eb;
+      --partenza: #2563eb;
+      --presente: #dc2626;
     }
 
     body {
@@ -293,6 +293,9 @@
       gap: 8px;
     }
     .booking-card:last-child { border-bottom: none; }
+    .booking-card.arrivo   { background: #f0fdf4; }
+    .booking-card.partenza { background: #eff6ff; }
+    .booking-card.presente { background: #fff5f5; }
 
     /* Riga superiore: badge canale + camera */
     .card-top {
@@ -394,6 +397,29 @@
       color: #dc2626;
     }
     .payment-row.zero { color: var(--text-muted); font-weight: 400; }
+
+    /* Breakdown voci (tassa + parcheggio + totale) */
+    .payment-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      background: rgba(0,0,0,.03);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: .82rem;
+    }
+    .breakdown-row { color: #b45309; }
+    .breakdown-row:last-child {
+      color: #dc2626;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 4px;
+      margin-top: 2px;
+    }
+    .breakdown-row:only-child {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
 
     /* Note */
     .note-row {
@@ -885,7 +911,7 @@ function renderBookings(bookings) {
   bar.innerHTML =
     '<div class="summary-chip arrivi"><span>' + arrivi.length + '</span>Arrivi</div>' +
     '<div class="summary-chip partenze"><span>' + partenze.length + '</span>Partenze</div>' +
-    '<div class="summary-chip presenti"><span>' + presenti.length + '</span>Presenti</div>';
+    '<div class="summary-chip presenti"><span>' + presenti.length + '</span>Occupate</div>';
   main.appendChild(bar);
 
   if (bookings.length === 0) {
@@ -898,7 +924,7 @@ function renderBookings(bookings) {
 
   renderSection(main, 'arrivi',   '🟢 Arrivi',   arrivi);
   renderSection(main, 'partenze', '🔴 Partenze', partenze);
-  renderSection(main, 'presenti', '🔵 Presenti', presenti);
+  renderSection(main, 'presenti', '🔵 Occupate', presenti);
 }
 
 function renderSection(container, cls, title, bookings) {
@@ -935,7 +961,7 @@ function renderSection(container, cls, title, bookings) {
 
 function renderCard(b) {
   var card = document.createElement('div');
-  card.className = 'booking-card';
+  card.className = 'booking-card ' + b.tipo;
 
   // Badge canale
   var canaleCls = 'canale-' + (b.canale || 'CASH').replace(/\s+/g, '-');
@@ -970,17 +996,57 @@ function renderCard(b) {
     );
   }
 
-  // Pagamento
+  // Valori numerici utili
+  var daPagareN    = parseFloat(String(b.daPagare   || 0).replace(',','.')) || 0;
+  var tassaN       = parseFloat(String(b.tassaRicevuta || 0).replace(',','.')) || 0;
+  var parkN        = parseFloat(String(b.park        || 0).replace(',','.')) || 0;
+  var kmiUp        = (b.kmi || '').toString().toUpperCase().trim();
+  var haKMI        = kmiUp === 'K' || kmiUp === 'M' || kmiUp === 'I';
+
+  // ── Blocco pagamento ──────────────────────────────────────
   var pagamentoHTML = '';
-  if (b.daPagare && parseFloat(String(b.daPagare).replace(',','.')) > 0) {
-    pagamentoHTML = '<div class="payment-row">💰 Da pagare: <strong>' + formatEuro(b.daPagare) + '</strong></div>';
+
+  if (haKMI) {
+    // K/M/I: mostra tassa + eventuale parcheggio + totale
+    var righe = [];
+    righe.push('🏛️ Tassa soggiorno: <strong>' + (tassaN > 0 ? formatEuro(tassaN) : 'da incassare') + '</strong>');
+    if (parkN > 0) {
+      righe.push('🅿️ Parcheggio: <strong>' + formatEuro(parkN) + '</strong>');
+    }
+    if (parkN > 0 && tassaN > 0) {
+      righe.push('💰 Totale: <strong>' + formatEuro(tassaN + parkN) + '</strong>');
+    }
+    pagamentoHTML =
+      '<div class="payment-breakdown">' +
+      righe.map(function(r) {
+        return '<div class="breakdown-row">' + r + '</div>';
+      }).join('') +
+      '</div>';
+  } else {
+    // "-" (cash): da pagare + eventuale parcheggio sommati
+    var totaleDaPagare = daPagareN + parkN;
+    if (totaleDaPagare > 0) {
+      var righe = [];
+      if (daPagareN > 0 && parkN > 0) {
+        righe.push('💰 Da pagare: <strong>' + formatEuro(daPagareN) + '</strong>');
+        righe.push('🅿️ Parcheggio: <strong>' + formatEuro(parkN) + '</strong>');
+        righe.push('💰 Totale: <strong>' + formatEuro(totaleDaPagare) + '</strong>');
+        pagamentoHTML =
+          '<div class="payment-breakdown">' +
+          righe.map(function(r) { return '<div class="breakdown-row">' + r + '</div>'; }).join('') +
+          '</div>';
+      } else {
+        pagamentoHTML = '<div class="payment-row">💰 Da pagare: <strong>' + formatEuro(totaleDaPagare) + '</strong></div>';
+      }
+    }
   }
 
   // Servizi
   var serviziHTML = '';
   var servizi = [];
-  if (b.taxi)  servizi.push('<span class="service-tag">🚕 Taxi</span>');
-  if (b.park)  servizi.push('<span class="service-tag">🅿️ Parcheggio</span>');
+  if (b.taxi) servizi.push('<span class="service-tag">🚕 Taxi</span>');
+  if (parkN > 0) servizi.push('<span class="service-tag">🅿️ ' + formatEuro(parkN) + '</span>');
+  else if (b.park) servizi.push('<span class="service-tag">🅿️ Parcheggio</span>');
   if (servizi.length) serviziHTML = '<div class="services">' + servizi.join('') + '</div>';
 
   // Note
@@ -993,7 +1059,7 @@ function renderCard(b) {
     '<div class="card-top">' +
       '<span class="canale-badge ' + canaleCls + '">' + canaleLabel + '</span>' +
       kmiBadge +
-      '<span class="room-label">📍 Cam ' + escapeHtml(String(b.camera)) + '</span>' +
+      '<span class="room-label">🛏️ ' + escapeHtml(String(b.camera)) + '</span>' +
     '</div>' +
     '<div class="guest-name">' + escapeHtml(b.nome) + '</div>' +
     (infoItems.length ? '<div class="card-info">' + infoItems.join('') + '</div>' : '') +
