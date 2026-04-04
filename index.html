@@ -597,7 +597,6 @@
     <div class="spinner"></div>
     <span>Caricamento…</span>
   </div>
-  <div id="error-banner"></div>
 </main>
 
 <!-- ══ MODALE IMPOSTAZIONI ══════════════════════════════════ -->
@@ -830,14 +829,18 @@ document.getElementById('date-picker').addEventListener('change', function() {
 function loadBookings() {
   var apiUrl = getApiUrl();
   var main = document.getElementById('main-content');
-  var errorBanner = document.getElementById('error-banner');
 
-  errorBanner.style.display = 'none';
+  // Rimuove eventuali messaggi di errore precedenti
+  var oldError = document.getElementById('inline-error');
+  if (oldError) oldError.remove();
 
   if (!apiUrl) {
-    main.innerHTML = '';
-    errorBanner.style.display = 'block';
-    errorBanner.textContent = '⚙️ Configura prima l\'URL e il Token tramite il pulsante ⚙️ in alto a destra.';
+    main.innerHTML =
+      '<div id="inline-error" style="margin:16px;padding:14px 16px;background:#fef3c7;' +
+      'border:1px solid #fcd34d;border-radius:12px;color:#92400e;font-size:.88rem;line-height:1.6">' +
+      '⚙️ <strong>Configurazione mancante</strong><br>' +
+      'Tocca il pulsante ⚙️ in alto a destra e inserisci l\'URL e il Token di Google Apps Script.' +
+      '</div>';
     return;
   }
 
@@ -856,11 +859,12 @@ function loadBookings() {
       renderBookings(json.data);
     })
     .catch(function(err) {
-      main.innerHTML = '';
-      errorBanner.style.display = 'block';
-      errorBanner.innerHTML =
+      main.innerHTML =
+        '<div id="inline-error" style="margin:16px;padding:14px 16px;background:#fef2f2;' +
+        'border:1px solid #fecaca;border-radius:12px;color:#991b1b;font-size:.88rem;line-height:1.6">' +
         '❌ <strong>Errore nel caricamento</strong><br>' + err.message +
-        '<br><small>Verifica che l\'URL sia corretto e che il web app sia pubblicato correttamente.</small>';
+        '<br><small>Verifica che URL e Token siano corretti e che il web app sia pubblicato.</small>' +
+        '</div>';
     });
 }
 
