@@ -571,6 +571,89 @@
     .summary-chip.arrivi   span { color: var(--arrivo); }
     .summary-chip.partenze span { color: var(--partenza); }
     .summary-chip.presenti span { color: var(--presente); }
+
+    /* ── Tab Dettaglio / Riassunto ─────────────────────── */
+    .view-tabs {
+      display: flex;
+      gap: 6px;
+    }
+    .view-tab {
+      flex: 1;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.2);
+      color: rgba(255,255,255,.7);
+      font-size: .8rem;
+      font-weight: 600;
+      padding: 6px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: background .15s, color .15s;
+    }
+    .view-tab.active {
+      background: #fff;
+      color: var(--header-bg);
+      border-color: #fff;
+    }
+
+    /* ── Vista Riassunto ───────────────────────────────── */
+    .riepilogo-header {
+      text-align: center;
+      font-size: .82rem;
+      color: var(--text-muted);
+      padding: 4px 0 8px;
+      font-style: italic;
+    }
+    .riepilogo-section {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 0;
+    }
+    .riepilogo-title {
+      padding: 12px 14px 8px;
+      font-size: .78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .riepilogo-title.occupate  { color: var(--presente); }
+    .riepilogo-title.escono    { color: var(--partenza); }
+    .riepilogo-title.entrano   { color: var(--arrivo);   }
+    .riepilogo-list {
+      padding: 8px 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .riepilogo-item {
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .riepilogo-item::before {
+      content: '•';
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .riepilogo-item .room-name { flex: 1; }
+    .riepilogo-item .room-detail {
+      font-size: .78rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .riepilogo-empty {
+      padding: 10px 14px;
+      font-size: .85rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -615,6 +698,10 @@
     <button class="nav-btn" id="next-btn">▶</button>
   </div>
   <input type="date" id="date-picker" />
+  <div class="view-tabs">
+    <button class="view-tab" id="tab-dettaglio">📋 Dettaglio</button>
+    <button class="view-tab" id="tab-riassunto">📝 Riassunto</button>
+  </div>
 </header>
 
 <!-- ══ CONTENUTO ════════════════════════════════════════════ -->
@@ -665,6 +752,35 @@
       <p class="modal-hint" style="margin-top:6px">
         Se imposti un PIN, verrà richiesto ad ogni apertura dell'app.
       </p>
+    </div>
+
+    <div>
+      <label class="modal-label" for="rooms-input">Nomi delle camere</label>
+      <textarea class="modal-input" id="rooms-input" rows="9"
+                style="resize:vertical;font-family:monospace;font-size:.82rem"
+                placeholder="1=ARGENTO&#10;2=ROSSA&#10;3=ORO&#10;..."></textarea>
+      <p class="modal-hint" style="margin-top:6px">
+        Una camera per riga nel formato <code>numero=NOME</code>.<br>
+        Usato nella vista Riassunto.
+      </p>
+    </div>
+
+    <div>
+      <label class="modal-label">Vista di default all'apertura</label>
+      <div style="display:flex;gap:8px">
+        <button type="button" class="default-view-btn" data-view="dettaglio"
+                id="default-dettaglio" style="flex:1;padding:8px;border-radius:8px;
+                border:2px solid var(--border);background:var(--bg);
+                font-size:.85rem;font-weight:600;cursor:pointer">
+          📋 Dettaglio
+        </button>
+        <button type="button" class="default-view-btn" data-view="riassunto"
+                id="default-riassunto" style="flex:1;padding:8px;border-radius:8px;
+                border:2px solid var(--border);background:var(--bg);
+                font-size:.85rem;font-weight:600;cursor:pointer">
+          📝 Riassunto
+        </button>
+      </div>
     </div>
 
     <button class="modal-save" id="modal-save-btn">Salva</button>
@@ -769,11 +885,39 @@ function checkPin() {
 var currentDate = new Date();
 currentDate.setHours(0,0,0,0);
 
-var API_URL_KEY   = 'prenotazioni_api_url';
-var API_TOKEN_KEY = 'prenotazioni_api_token';
+var API_URL_KEY    = 'prenotazioni_api_url';
+var API_TOKEN_KEY  = 'prenotazioni_api_token';
+var ROOMS_KEY      = 'prenotazioni_rooms';
+var DEF_VIEW_KEY   = 'prenotazioni_default_view';
 
-function getApiUrl()   { return localStorage.getItem(API_URL_KEY)   || ''; }
-function getApiToken() { return localStorage.getItem(API_TOKEN_KEY) || ''; }
+function getApiUrl()      { return localStorage.getItem(API_URL_KEY)   || ''; }
+function getApiToken()    { return localStorage.getItem(API_TOKEN_KEY) || ''; }
+function getDefaultView() { return localStorage.getItem(DEF_VIEW_KEY)  || 'dettaglio'; }
+
+// Ritorna mappa { "1": "ARGENTO", "2": "ROSSA", ... }
+function getRoomNames() {
+  var raw = localStorage.getItem(ROOMS_KEY) || '';
+  var map = {};
+  raw.split('\n').forEach(function(line) {
+    var parts = line.split('=');
+    if (parts.length >= 2) {
+      var num  = parts[0].trim();
+      var name = parts.slice(1).join('=').trim().toUpperCase();
+      if (num) map[num] = name;
+    }
+  });
+  return map;
+}
+
+function roomLabel(camera, roomNames) {
+  var key = String(camera).trim();
+  var name = roomNames[key];
+  return name ? 'Camera ' + key + ' ' + name : 'Camera ' + key;
+}
+
+// ── Stato vista corrente ──────────────────────────────────────
+var currentView = getDefaultView(); // 'dettaglio' | 'riassunto'
+var cachedBookings = null;          // cache ultima risposta API
 
 // ══════════════════════════════════════════════════════════════
 // Utilità date
@@ -816,14 +960,30 @@ function updateDateDisplay() {
   document.getElementById('date-picker').value = toISOLocal(currentDate);
 }
 
+// ── Gestione tab vista ────────────────────────────────────────
+function setView(view) {
+  currentView = view;
+  document.getElementById('tab-dettaglio').classList.toggle('active', view === 'dettaglio');
+  document.getElementById('tab-riassunto').classList.toggle('active', view === 'riassunto');
+  if (cachedBookings !== null) {
+    if (view === 'riassunto') renderRiassunto(cachedBookings);
+    else renderBookings(cachedBookings);
+  }
+}
+
+document.getElementById('tab-dettaglio').addEventListener('click', function() { setView('dettaglio'); });
+document.getElementById('tab-riassunto').addEventListener('click', function() { setView('riassunto'); });
+
 document.getElementById('prev-btn').addEventListener('click', function() {
   currentDate = addDays(currentDate, -1);
+  cachedBookings = null;
   updateDateDisplay();
   loadBookings();
 });
 
 document.getElementById('next-btn').addEventListener('click', function() {
   currentDate = addDays(currentDate, 1);
+  cachedBookings = null;
   updateDateDisplay();
   loadBookings();
 });
@@ -831,6 +991,7 @@ document.getElementById('next-btn').addEventListener('click', function() {
 document.getElementById('today-btn').addEventListener('click', function() {
   currentDate = new Date();
   currentDate.setHours(0,0,0,0);
+  cachedBookings = null;
   updateDateDisplay();
   loadBookings();
 });
@@ -845,6 +1006,7 @@ document.getElementById('date-picker').addEventListener('change', function() {
   if (!this.value) return;
   var parts = this.value.split('-');
   currentDate = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+  cachedBookings = null;
   updateDateDisplay();
   loadBookings();
 });
@@ -882,7 +1044,9 @@ function loadBookings() {
     })
     .then(function(json) {
       if (!json.success) throw new Error(json.error || 'Errore sconosciuto');
-      renderBookings(json.data);
+      cachedBookings = json.data;
+      if (currentView === 'riassunto') renderRiassunto(json.data);
+      else renderBookings(json.data);
     })
     .catch(function(err) {
       main.innerHTML =
@@ -925,6 +1089,93 @@ function renderBookings(bookings) {
   renderSection(main, 'arrivi',   '🟢 Arrivi',   arrivi);
   renderSection(main, 'partenze', '🔴 Partenze', partenze);
   renderSection(main, 'presenti', '🔵 Occupate', presenti);
+}
+
+// ══════════════════════════════════════════════════════════════
+// Vista RIASSUNTO
+// ══════════════════════════════════════════════════════════════
+function renderRiassunto(bookings) {
+  var main = document.getElementById('main-content');
+  main.innerHTML = '';
+  var roomNames = getRoomNames();
+
+  var arrivi   = bookings.filter(function(b){ return b.tipo === 'arrivo';   });
+  var partenze = bookings.filter(function(b){ return b.tipo === 'partenza'; });
+  var presenti = bookings.filter(function(b){ return b.tipo === 'presente'; });
+
+  // Intestazione data
+  var hdr = document.createElement('div');
+  hdr.className = 'riepilogo-header';
+  hdr.textContent = 'Situazione per ' + formatDisplayDate(currentDate);
+  main.appendChild(hdr);
+
+  // Sezione OCCUPATE
+  main.appendChild(buildRiepilogoSection(
+    'occupate',
+    '🔴 Camere OCCUPATE — NON TOCCARE',
+    presenti,
+    roomNames,
+    false
+  ));
+
+  // Sezione ESCONO
+  main.appendChild(buildRiepilogoSection(
+    'escono',
+    '🚪 Camere che ESCONO Oggi',
+    partenze,
+    roomNames,
+    false
+  ));
+
+  // Sezione ENTRANO
+  main.appendChild(buildRiepilogoSection(
+    'entrano',
+    '🛎️ Camere che ENTRANO Oggi',
+    arrivi,
+    roomNames,
+    true
+  ));
+}
+
+function buildRiepilogoSection(cls, title, bookings, roomNames, showDetail) {
+  var section = document.createElement('div');
+  section.className = 'riepilogo-section';
+
+  var t = document.createElement('div');
+  t.className = 'riepilogo-title ' + cls;
+  t.textContent = title;
+  section.appendChild(t);
+
+  if (bookings.length === 0) {
+    var empty = document.createElement('div');
+    empty.className = 'riepilogo-empty';
+    empty.textContent = 'Nessuna';
+    section.appendChild(empty);
+    return section;
+  }
+
+  var list = document.createElement('div');
+  list.className = 'riepilogo-list';
+
+  bookings.forEach(function(b) {
+    var item = document.createElement('div');
+    item.className = 'riepilogo-item';
+
+    var name = roomLabel(b.camera, roomNames);
+    var detail = '';
+    if (showDetail) {
+      var ospiti = (parseInt(b.adulti) || 0) + (parseInt(b.bimbi) || 0);
+      detail = b.notti + ' nott' + (b.notti == 1 ? 'e' : 'i') + ' · ' + ospiti + ' ospit' + (ospiti == 1 ? 'e' : 'i');
+    }
+
+    item.innerHTML =
+      '<span class="room-name">' + escapeHtml(name) + '</span>' +
+      (detail ? '<span class="room-detail">' + detail + '</span>' : '');
+    list.appendChild(item);
+  });
+
+  section.appendChild(list);
+  return section;
 }
 
 function renderSection(container, cls, title, bookings) {
@@ -1105,7 +1356,30 @@ document.getElementById('settings-btn').addEventListener('click', function() {
   document.getElementById('pin-input').value = '';
   document.getElementById('pin-input').placeholder =
     storedPin() ? '••••  (lascia vuoto per non cambiarlo)' : 'Lascia vuoto per disabilitare il PIN';
+  document.getElementById('rooms-input').value = localStorage.getItem(ROOMS_KEY) || '';
+  // Evidenzia vista default corrente
+  var defView = getDefaultView();
+  document.getElementById('default-dettaglio').style.borderColor = defView === 'dettaglio' ? '#1e293b' : '';
+  document.getElementById('default-dettaglio').style.background   = defView === 'dettaglio' ? '#1e293b' : '';
+  document.getElementById('default-dettaglio').style.color        = defView === 'dettaglio' ? '#fff'    : '';
+  document.getElementById('default-riassunto').style.borderColor  = defView === 'riassunto' ? '#1e293b' : '';
+  document.getElementById('default-riassunto').style.background   = defView === 'riassunto' ? '#1e293b' : '';
+  document.getElementById('default-riassunto').style.color        = defView === 'riassunto' ? '#fff'    : '';
   modal.classList.add('open');
+});
+
+// Selezione vista default nelle impostazioni
+document.querySelectorAll('.default-view-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var v = this.dataset.view;
+    document.querySelectorAll('.default-view-btn').forEach(function(b) {
+      var active = b.dataset.view === v;
+      b.style.borderColor = active ? '#1e293b' : '';
+      b.style.background  = active ? '#1e293b' : '';
+      b.style.color       = active ? '#fff'    : '';
+    });
+    localStorage.setItem(DEF_VIEW_KEY, v);
+  });
 });
 
 document.getElementById('modal-save-btn').addEventListener('click', function() {
@@ -1114,17 +1388,16 @@ document.getElementById('modal-save-btn').addEventListener('click', function() {
 
   var newToken = document.getElementById('api-token-input').value.trim();
   if (newToken) localStorage.setItem(API_TOKEN_KEY, newToken);
-  // Se vuoto: nessuna modifica al token esistente
 
   var newPin = document.getElementById('pin-input').value.trim();
-  if (/^\d{4}$/.test(newPin)) {
-    localStorage.setItem(PIN_KEY, newPin);
-  }
-  // Se vuoto: nessuna modifica al PIN esistente
+  if (/^\d{4}$/.test(newPin)) localStorage.setItem(PIN_KEY, newPin);
+
+  localStorage.setItem(ROOMS_KEY, document.getElementById('rooms-input').value);
 
   document.getElementById('api-token-input').value = '';
   document.getElementById('pin-input').value = '';
   modal.classList.remove('open');
+  cachedBookings = null;
   loadBookings();
 });
 
@@ -1149,6 +1422,7 @@ modal.addEventListener('click', function(e) {
 // Avvio
 // ══════════════════════════════════════════════════════════════
 updateDateDisplay();
+setView(getDefaultView());
 
 // Controlla PIN all'avvio
 if (storedPin() && !isUnlocked()) {
