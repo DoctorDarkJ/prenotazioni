@@ -1061,11 +1061,21 @@ function loadBookings() {
 // ══════════════════════════════════════════════════════════════
 // Rendering
 // ══════════════════════════════════════════════════════════════
+
+// Ordina gli arrivi per orario (prima i più presto, senza orario in fondo)
+function sortByOrario(list) {
+  return list.slice().sort(function(a, b) {
+    var ta = a.orario ? a.orario.replace(':','') : '9999';
+    var tb = b.orario ? b.orario.replace(':','') : '9999';
+    return parseInt(ta) - parseInt(tb);
+  });
+}
+
 function renderBookings(bookings) {
   var main = document.getElementById('main-content');
   main.innerHTML = '';
 
-  var arrivi   = bookings.filter(function(b){ return b.tipo === 'arrivo';   });
+  var arrivi   = sortByOrario(bookings.filter(function(b){ return b.tipo === 'arrivo';   }));
   var partenze = bookings.filter(function(b){ return b.tipo === 'partenza'; });
   var presenti = bookings.filter(function(b){ return b.tipo === 'presente'; });
 
@@ -1099,7 +1109,7 @@ function renderRiassunto(bookings) {
   main.innerHTML = '';
   var roomNames = getRoomNames();
 
-  var arrivi   = bookings.filter(function(b){ return b.tipo === 'arrivo';   });
+  var arrivi   = sortByOrario(bookings.filter(function(b){ return b.tipo === 'arrivo';   }));
   var partenze = bookings.filter(function(b){ return b.tipo === 'partenza'; });
   var presenti = bookings.filter(function(b){ return b.tipo === 'presente'; });
 
@@ -1166,6 +1176,7 @@ function buildRiepilogoSection(cls, title, bookings, roomNames, showDetail) {
     if (showDetail) {
       var ospiti = (parseInt(b.adulti) || 0) + (parseInt(b.bimbi) || 0);
       detail = b.notti + ' nott' + (b.notti == 1 ? 'e' : 'i') + ' · ' + ospiti + ' ospit' + (ospiti == 1 ? 'e' : 'i');
+      if (b.orario) detail = '⏰ ' + b.orario + ' · ' + detail;
     }
 
     item.innerHTML =
@@ -1221,7 +1232,7 @@ function renderCard(b) {
   // KMI badge
   var kmiVal = (b.kmi || '-').toUpperCase();
   var kmiBadge = '<span class="kmi-badge kmi-' + kmiVal + '">' + kmiVal + '</span>';
-  var parkBadge = b.park ? '<span class="kmi-badge" style="background:#e0f2fe;color:#0369a1;font-size:.7rem;font-weight:800">P</span>' : '';
+  var parkBadge = b.park ? '<span class="kmi-badge" style="background:#fee2e2;font-size:.85rem">🚗</span>' : '';
 
   // Righe info
   var infoItems = [];
