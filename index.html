@@ -666,84 +666,100 @@
     }
     .report-search-btn:active { opacity: .85; }
 
-    /* Gruppi risultati */
-    .report-group {
+    /* ── Calendario disponibilità ───────────────────────────── */
+    .cal-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 12px 14px;
+    }
+    .cal-nav-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      width: 36px; height: 36px;
+      font-size: .95rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cal-nav-btn:active { opacity: .7; }
+    .cal-month-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+    }
+    .cal-grid-wrapper {
       background: var(--surface);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
     }
-    .report-group-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      background: var(--header-bg);
     }
-    .report-group-dot {
-      width: 12px; height: 12px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .free-0 .report-group-dot { background: #dc2626; }
-    .free-1 .report-group-dot { background: #ea580c; }
-    .free-2 .report-group-dot { background: #ca8a04; }
-    .free-3 .report-group-dot { background: #16a34a; }
-
-    .report-group-title {
+    .cal-weekday {
+      color: #fff;
+      text-align: center;
+      font-size: .68rem;
       font-weight: 700;
-      font-size: .88rem;
-      flex: 1;
+      padding: 7px 0;
     }
-    .free-0 .report-group-title { color: #dc2626; }
-    .free-1 .report-group-title { color: #ea580c; }
-    .free-2 .report-group-title { color: #ca8a04; }
-    .free-3 .report-group-title { color: #16a34a; }
-
-    .report-group-count {
-      background: var(--bg);
-      color: var(--text-muted);
-      font-size: .78rem;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 20px;
+    .cal-cells {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: var(--border);
     }
-    .report-group-toggle {
-      color: var(--text-muted);
-      font-size: .85rem;
-      transition: transform .2s;
-    }
-    .report-group.collapsed .report-group-toggle { transform: rotate(-90deg); }
-    .report-group.collapsed .report-group-body   { display: none; }
-
-    .report-group-body {
+    .cal-cell {
+      background: #fff;
+      min-height: 50px;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 4px 2px;
     }
-    .report-day-row {
+    .cal-cell.cal-empty   { background: var(--bg); }
+    .cal-cell.cal-full    { background: #dc2626; }
+    .cal-cell.cal-one     { background: #ea580c; }
+    .cal-cell.cal-two     { background: #eab308; }
+    .cal-cell.cal-today   { outline: 2px solid var(--header-bg); outline-offset: -2px; }
+    .cal-cell-day {
+      font-size: .7rem;
+      font-weight: 600;
+      line-height: 1;
+      color: var(--text-muted);
+    }
+    .cal-cell.cal-full .cal-cell-day,
+    .cal-cell.cal-one  .cal-cell-day { color: rgba(255,255,255,.8); }
+    .cal-cell.cal-two  .cal-cell-day { color: rgba(0,0,0,.45); }
+    .cal-cell-free {
+      font-size: 1.1rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--text);
+    }
+    .cal-cell.cal-full .cal-cell-free { display: none; }
+    .cal-cell.cal-one  .cal-cell-free,
+    .cal-cell.cal-two  .cal-cell-free { color: #fff; }
+    .cal-cell.cal-two  .cal-cell-free { color: #1e293b; }
+    .cal-loading {
+      grid-column: 1 / -1;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 9px 14px;
-      border-bottom: 1px solid var(--border);
-      font-size: .87rem;
+      justify-content: center;
+      gap: 10px;
+      padding: 40px;
+      color: var(--text-muted);
+      font-size: .9rem;
+      background: var(--surface);
     }
-    .report-day-row:last-child { border-bottom: none; }
-    .report-day-name { font-weight: 600; }
-    .report-day-occ  { font-size: .78rem; color: var(--text-muted); }
-    .report-free-badge {
-      font-size: .72rem;
-      font-weight: 700;
-      padding: 3px 9px;
-      border-radius: 20px;
-      color: #fff;
-      flex-shrink: 0;
-    }
-    .free-0 .report-free-badge { background: #dc2626; }
-    .free-1 .report-free-badge { background: #ea580c; }
-    .free-2 .report-free-badge { background: #ca8a04; }
-    .free-3 .report-free-badge { background: #16a34a; }
 
     /* ── Vista Riassunto ───────────────────────────────── */
     .riepilogo-header {
@@ -1360,170 +1376,155 @@ function buildRiepilogoSection(cls, title, bookings, roomNames, showDetail) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// Vista REPORT DISPONIBILITÀ
+// Vista REPORT DISPONIBILITÀ — Calendario mensile
 // ══════════════════════════════════════════════════════════════
-var reportFromDate = toISOLocal(new Date());
+var reportCalDate = (function() { var d = new Date(); d.setDate(1); return d; }());
+
+var CAL_DAYS = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
 
 function renderReportControls() {
   var main = document.getElementById('main-content');
   main.innerHTML =
-    '<div class="report-controls" id="report-ctrl">' +
-      '<div style="font-weight:700;font-size:.95rem">📊 Disponibilità bassa capienza</div>' +
-      '<div class="report-controls-row">' +
-        '<span class="report-label">Dal:</span>' +
-        '<input class="report-input" type="date" id="report-from" value="' + reportFromDate + '" />' +
-      '</div>' +
-      '<div>' +
-        '<div class="report-label" style="margin-bottom:6px">Periodo:</div>' +
-        '<div class="report-days-group" id="report-days-group">' +
-          '<button class="report-days-btn' + (reportDays===30 ?' active':'') + '" data-days="30">30 gg</button>' +
-          '<button class="report-days-btn' + (reportDays===90 ?' active':'') + '" data-days="90">90 gg</button>' +
-          '<button class="report-days-btn' + (reportDays===180?' active':'') + '" data-days="180">6 mesi</button>' +
-          '<button class="report-days-btn' + (reportDays===365?' active':'') + '" data-days="365">1 anno</button>' +
-        '</div>' +
-      '</div>' +
-      '<button class="report-search-btn" id="report-search-btn">🔍 Cerca</button>' +
+    '<div class="cal-nav" id="cal-nav">' +
+      '<button class="cal-nav-btn" id="cal-prev">◀</button>' +
+      '<div class="cal-month-title" id="cal-month-title"></div>' +
+      '<button class="cal-nav-btn" id="cal-next">▶</button>' +
     '</div>' +
-    '<div id="report-results"></div>';
+    '<div class="cal-grid-wrapper">' +
+      '<div class="cal-weekdays">' +
+        CAL_DAYS.map(function(d){ return '<div class="cal-weekday">' + d + '</div>'; }).join('') +
+      '</div>' +
+      '<div class="cal-cells" id="cal-cells">' +
+        '<div class="cal-loading"><div class="spinner"></div><span>Caricamento…</span></div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="display:flex;gap:6px;flex-wrap:wrap;font-size:.72rem;color:var(--text-muted)">' +
+      '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#dc2626;display:inline-block"></span>Pieno</span>' +
+      '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#ea580c;display:inline-block"></span>1 libera</span>' +
+      '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#eab308;display:inline-block"></span>2 libere</span>' +
+      '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#fff;border:1px solid #e2e8f0;display:inline-block"></span>3+ libere</span>' +
+    '</div>';
 
-  document.getElementById('report-days-group').addEventListener('click', function(e) {
-    var btn = e.target.closest('.report-days-btn');
-    if (!btn) return;
-    document.querySelectorAll('.report-days-btn').forEach(function(b){ b.classList.remove('active'); });
-    btn.classList.add('active');
-    reportDays = parseInt(btn.dataset.days);
+  updateCalMonthTitle();
+
+  document.getElementById('cal-prev').addEventListener('click', function() {
+    reportCalDate = new Date(reportCalDate.getFullYear(), reportCalDate.getMonth() - 1, 1);
+    updateCalMonthTitle();
+    fetchCalendarMonth();
   });
 
-  document.getElementById('report-from').addEventListener('change', function() {
-    reportFromDate = this.value;
+  document.getElementById('cal-next').addEventListener('click', function() {
+    reportCalDate = new Date(reportCalDate.getFullYear(), reportCalDate.getMonth() + 1, 1);
+    updateCalMonthTitle();
+    fetchCalendarMonth();
   });
 
-  document.getElementById('report-search-btn').addEventListener('click', function() {
-    reportFromDate = document.getElementById('report-from').value || toISOLocal(new Date());
-    fetchOccupancyReport();
-  });
+  fetchCalendarMonth();
 }
 
-function fetchOccupancyReport() {
-  var apiUrl  = getApiUrl();
-  var results = document.getElementById('report-results');
+function updateCalMonthTitle() {
+  var el = document.getElementById('cal-month-title');
+  if (el) el.textContent = MESI[reportCalDate.getMonth()] + ' ' + reportCalDate.getFullYear();
+}
 
+function fetchCalendarMonth() {
+  var year  = reportCalDate.getFullYear();
+  var month = reportCalDate.getMonth();
+  var from  = year + '-' + String(month + 1).padStart(2, '0') + '-01';
+  var days  = new Date(year, month + 1, 0).getDate();
+
+  var cells = document.getElementById('cal-cells');
+  if (!cells) return;
+  cells.innerHTML = '<div class="cal-loading"><div class="spinner"></div><span>Caricamento…</span></div>';
+
+  var apiUrl = getApiUrl();
   if (!apiUrl) {
-    results.innerHTML =
-      '<div style="padding:14px;background:#fef3c7;border:1px solid #fcd34d;' +
-      'border-radius:12px;color:#92400e;font-size:.88rem">⚙️ Configura URL e Token nelle impostazioni.</div>';
+    cells.innerHTML =
+      '<div style="grid-column:1/-1;padding:14px;background:#fef3c7;border:1px solid #fcd34d;' +
+      'border-radius:12px;color:#92400e;font-size:.88rem;margin:8px">⚙️ Configura URL e Token nelle impostazioni.</div>';
     return;
   }
 
-  results.innerHTML =
-    '<div id="loading" style="display:flex;flex-direction:column;align-items:center;' +
-    'gap:12px;padding:40px;color:#64748b;font-size:.9rem">' +
-    '<div class="spinner"></div><span>Calcolo in corso…</span></div>';
-
   var token = getApiToken();
-  var url   = apiUrl +
+  var url = apiUrl +
     '?action=occupancy' +
-    '&from='        + encodeURIComponent(reportFromDate) +
-    '&days='        + reportDays +
+    '&from='        + encodeURIComponent(from) +
+    '&days='        + days +
+    '&full=1' +
     '&totalRooms='  + getTotalRooms() +
     (token ? '&token=' + encodeURIComponent(token) : '');
 
   fetch(url)
     .then(function(res) {
-      if (!res.ok) throw new Error('Errore HTTP ' + res.status);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       return res.json();
     })
     .then(function(json) {
       if (!json.success) throw new Error(json.error || 'Errore sconosciuto');
-      renderReportResults(json.data);
+      renderCalendar(year, month, json.data);
     })
     .catch(function(err) {
-      results.innerHTML =
-        '<div style="padding:14px;background:#fef2f2;border:1px solid #fecaca;' +
-        'border-radius:12px;color:#991b1b;font-size:.88rem">' +
+      var c = document.getElementById('cal-cells');
+      if (c) c.innerHTML =
+        '<div style="grid-column:1/-1;padding:14px;background:#fef2f2;border:1px solid #fecaca;' +
+        'border-radius:12px;color:#991b1b;font-size:.88rem;margin:8px">' +
         '❌ <strong>Errore</strong>: ' + err.message +
-        '<br><small>Hai fatto il nuovo deploy di Apps Script dopo aver aggiornato Code.gs?</small></div>';
+        '<br><small>Ricorda di fare il nuovo deploy di Apps Script dopo aver aggiornato Code.gs.</small></div>';
     });
 }
 
-function renderReportResults(data) {
-  var results = document.getElementById('report-results');
-  results.innerHTML = '';
+function renderCalendar(year, month, data) {
+  var cells = document.getElementById('cal-cells');
+  if (!cells) return;
+  cells.innerHTML = '';
 
-  if (data.length === 0) {
-    results.innerHTML =
-      '<div style="text-align:center;padding:40px;color:#64748b;font-size:.9rem">' +
-      '✅ Nessun giorno con 3 o meno camere libere nel periodo!</div>';
-    return;
+  // Lookup: "YYYY-MM-DD" → freeCount
+  var lookup = {};
+  data.forEach(function(d) { lookup[d.date] = d.free; });
+
+  var today      = new Date();
+  var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  // Italian week: Mon=0 … Sun=6; JS: Sun=0, Mon=1 … Sat=6
+  var firstDow = new Date(year, month, 1).getDay();
+  var offset   = (firstDow === 0) ? 6 : firstDow - 1;
+
+  // Empty padding cells
+  for (var i = 0; i < offset; i++) {
+    var empty = document.createElement('div');
+    empty.className = 'cal-cell cal-empty';
+    cells.appendChild(empty);
   }
 
-  // Riepilogo totali
-  var counts = {0:0, 1:0, 2:0, 3:0};
-  data.forEach(function(d){ if (counts[d.free]!==undefined) counts[d.free]++; });
-  var totHTML =
-    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:0">' +
-    [0,1,2,3].map(function(f){
-      if (!counts[f]) return '';
-      var colors = ['#dc2626','#ea580c','#ca8a04','#16a34a'];
-      return '<div style="flex:1;min-width:60px;background:var(--surface);border-radius:10px;' +
-        'box-shadow:var(--shadow);padding:8px 4px;text-align:center">' +
-        '<div style="font-size:1.2rem;font-weight:800;color:' + colors[f] + '">' + counts[f] + '</div>' +
-        '<div style="font-size:.72rem;color:var(--text-muted)">' +
-          (f===0?'Pieni':(f+' liber'+(f===1?'a':'e'))) +
-        '</div></div>';
-    }).join('') +
-    '</div>';
-  var totDiv = document.createElement('div');
-  totDiv.innerHTML = totHTML;
-  results.appendChild(totDiv);
+  for (var d = 1; d <= daysInMonth; d++) {
+    var dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    var free    = lookup[dateStr]; // undefined if not returned
 
-  var groups = {0:[], 1:[], 2:[], 3:[]};
-  data.forEach(function(d){ if (groups[d.free]!==undefined) groups[d.free].push(d); });
+    var cell = document.createElement('div');
+    var cls  = 'cal-cell';
+    if (free !== undefined) {
+      if      (free === 0) cls += ' cal-full';
+      else if (free === 1) cls += ' cal-one';
+      else if (free === 2) cls += ' cal-two';
+    }
+    var isToday = (year === today.getFullYear() && month === today.getMonth() && d === today.getDate());
+    if (isToday) cls += ' cal-today';
+    cell.className = cls;
 
-  var configs = [
-    { free:0, label:'🔴 PIENO — 0 camere libere' },
-    { free:1, label:'🟠 1 camera libera' },
-    { free:2, label:'🟡 2 camere libere' },
-    { free:3, label:'🟢 3 camere libere' }
-  ];
+    var dayNum = document.createElement('div');
+    dayNum.className = 'cal-cell-day';
+    dayNum.textContent = d;
+    cell.appendChild(dayNum);
 
-  configs.forEach(function(cfg) {
-    var days = groups[cfg.free];
-    if (!days.length) return;
+    if (free !== undefined && free > 0) {
+      var freeEl = document.createElement('div');
+      freeEl.className = 'cal-cell-free';
+      freeEl.textContent = free;
+      cell.appendChild(freeEl);
+    }
 
-    var group = document.createElement('div');
-    group.className = 'report-group free-' + cfg.free;
-
-    var hdr = document.createElement('div');
-    hdr.className = 'report-group-header';
-    hdr.innerHTML =
-      '<div class="report-group-dot"></div>' +
-      '<div class="report-group-title">' + cfg.label + '</div>' +
-      '<span class="report-group-count">' + days.length + '</span>' +
-      '<span class="report-group-toggle">▾</span>';
-    hdr.addEventListener('click', function(){ group.classList.toggle('collapsed'); });
-
-    var body = document.createElement('div');
-    body.className = 'report-group-body';
-
-    days.forEach(function(d) {
-      var p  = d.date.split('-');
-      var dt = new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2]));
-      var row = document.createElement('div');
-      row.className = 'report-day-row';
-      row.innerHTML =
-        '<span class="report-day-name">' + formatDisplayDate(dt) + '</span>' +
-        '<span class="report-day-occ">' + d.occupied + '/' + getTotalRooms() + ' occ.</span>' +
-        '<span class="report-free-badge">' +
-          (d.free === 0 ? 'PIENO' : d.free + ' liber' + (d.free===1?'a':'e')) +
-        '</span>';
-      body.appendChild(row);
-    });
-
-    group.appendChild(hdr);
-    group.appendChild(body);
-    results.appendChild(group);
-  });
+    cells.appendChild(cell);
+  }
 }
 
 function renderSection(container, cls, title, bookings) {
