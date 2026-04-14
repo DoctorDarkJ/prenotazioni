@@ -761,7 +761,160 @@
       background: var(--surface);
     }
 
-    /* ── Vista Riassunto ───────────────────────────────── */
+    /* ── Vista Occupazione ─────────────────────────────────── */
+    .occ-wrapper {
+      border-radius: var(--radius);
+      box-shadow: 0 6px 28px rgba(0,0,0,.15);
+      overflow: hidden;
+    }
+    .occ-header {
+      background: linear-gradient(150deg, #0f172a 0%, #1e3a5f 60%, #1e4080 100%);
+      padding: 14px 16px 0;
+    }
+    .occ-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+    }
+    .occ-nav-btn {
+      width: 34px; height: 34px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 8px;
+      color: #fff;
+      font-size: .88rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .occ-nav-btn:active { background: rgba(255,255,255,.28); }
+    .occ-month-label {
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: .01em;
+    }
+    .occ-weekdays-bar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      background: rgba(0,0,0,.18);
+    }
+    .occ-weekday {
+      color: rgba(255,255,255,.55);
+      text-align: center;
+      font-size: .58rem;
+      font-weight: 700;
+      padding: 7px 0 6px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .occ-weekday:nth-child(6),
+    .occ-weekday:nth-child(7) { color: rgba(255,255,255,.3); }
+    .occ-body {
+      background: #dde3ef;
+      padding: 6px;
+    }
+    .occ-cells {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .occ-cell {
+      background: #fff;
+      border-radius: 6px;
+      padding: 4px 3px 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    }
+    .occ-cell.occ-empty  { background: transparent; box-shadow: none; }
+    .occ-cell.occ-weekend { background: #f8fafc; }
+    .occ-cell.occ-full {
+      background: linear-gradient(160deg, #fef2f2, #fee2e2);
+      border: 1px solid #fca5a5;
+    }
+    .occ-cell.occ-one {
+      background: linear-gradient(160deg, #fff7ed, #ffedd5);
+      border: 1px solid #fdba74;
+    }
+    .occ-cell.occ-two {
+      background: linear-gradient(160deg, #fefce8, #fef9c3);
+      border: 1px solid #fde047;
+    }
+    .occ-cell.occ-today {
+      box-shadow: 0 0 0 2.5px #1e293b, 0 2px 10px rgba(0,0,0,.18);
+    }
+    .occ-day-num {
+      width: 18px; height: 18px;
+      display: flex; align-items: center; justify-content: center;
+      align-self: flex-end;
+      font-size: .62rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-radius: 50%;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .occ-cell.occ-today  .occ-day-num { background: #1e293b; color: #fff; }
+    .occ-cell.occ-full   .occ-day-num { color: #dc2626; }
+    .occ-cell.occ-one    .occ-day-num { color: #c2410c; }
+    .occ-cell.occ-two    .occ-day-num { color: #a16207; }
+    .occ-full-label {
+      font-size: .54rem;
+      font-weight: 900;
+      color: #dc2626;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+    .occ-chips {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      width: 100%;
+    }
+    .occ-chip {
+      font-size: .58rem;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: 20px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .occ-cell.occ-one  .occ-chip { background: #ffedd5; color: #c2410c; }
+    .occ-cell.occ-two  .occ-chip { background: #fef9c3; color: #a16207; }
+    .occ-legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 4px 2px;
+      font-size: .72rem;
+      color: var(--text-muted);
+    }
+    .occ-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .occ-legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+    .occ-legend-item:nth-child(1) .occ-legend-dot { background: #fee2e2; border: 1px solid #dc2626; }
+    .occ-legend-item:nth-child(2) .occ-legend-dot { background: #ffedd5; border: 1px solid #f97316; }
+    .occ-legend-item:nth-child(3) .occ-legend-dot { background: #fef9c3; border: 1px solid #eab308; }
+    .occ-legend-item:nth-child(4) .occ-legend-dot { background: #dbeafe; border: 1px solid #1d4ed8; }
     .riepilogo-header {
       text-align: center;
       font-size: .82rem;
@@ -867,6 +1020,7 @@
     <button class="view-tab" id="tab-dettaglio">📋 Dettaglio</button>
     <button class="view-tab" id="tab-riassunto">📝 Riassunto</button>
     <button class="view-tab" id="tab-report">📊 Report</button>
+    <button class="view-tab" id="tab-occupazione">🛏️ Camere</button>
   </div>
 </header>
 
@@ -1141,13 +1295,16 @@ function updateDateDisplay() {
 // ── Gestione tab vista ────────────────────────────────────────
 function setView(view) {
   currentView = view;
-  document.getElementById('tab-dettaglio').classList.toggle('active', view === 'dettaglio');
-  document.getElementById('tab-riassunto').classList.toggle('active', view === 'riassunto');
-  document.getElementById('tab-report').classList.toggle('active',    view === 'report');
-  document.querySelector('header').classList.toggle('report-mode',    view === 'report');
+  document.getElementById('tab-dettaglio').classList.toggle('active',    view === 'dettaglio');
+  document.getElementById('tab-riassunto').classList.toggle('active',    view === 'riassunto');
+  document.getElementById('tab-report').classList.toggle('active',       view === 'report');
+  document.getElementById('tab-occupazione').classList.toggle('active',  view === 'occupazione');
+  document.querySelector('header').classList.toggle('report-mode', view === 'report' || view === 'occupazione');
 
   if (view === 'report') {
     renderReportControls();
+  } else if (view === 'occupazione') {
+    renderOccupazione();
   } else if (cachedBookings !== null) {
     if (view === 'riassunto') renderRiassunto(cachedBookings);
     else renderBookings(cachedBookings);
@@ -1156,9 +1313,10 @@ function setView(view) {
   }
 }
 
-document.getElementById('tab-dettaglio').addEventListener('click', function() { setView('dettaglio'); });
-document.getElementById('tab-riassunto').addEventListener('click', function() { setView('riassunto'); });
-document.getElementById('tab-report').addEventListener('click',    function() { setView('report'); });
+document.getElementById('tab-dettaglio').addEventListener('click',   function() { setView('dettaglio'); });
+document.getElementById('tab-riassunto').addEventListener('click',   function() { setView('riassunto'); });
+document.getElementById('tab-report').addEventListener('click',      function() { setView('report'); });
+document.getElementById('tab-occupazione').addEventListener('click', function() { setView('occupazione'); });
 
 document.getElementById('prev-btn').addEventListener('click', function() {
   currentDate = addDays(currentDate, -1);
@@ -1521,6 +1679,194 @@ function renderCalendar(year, month, data) {
       freeEl.className = 'cal-cell-free';
       freeEl.textContent = free;
       cell.appendChild(freeEl);
+    }
+
+    cells.appendChild(cell);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// Vista OCCUPAZIONE — calendario camere libere
+// ══════════════════════════════════════════════════════════════
+var occCalDate = (function() { var d = new Date(); d.setDate(1); return d; }());
+
+function getAllRoomIds() {
+  var names = getRoomNames();
+  var keys  = Object.keys(names);
+  if (keys.length > 0) {
+    return keys.slice().sort(function(a, b) {
+      var na = parseInt(a), nb = parseInt(b);
+      if (!isNaN(na) && !isNaN(nb)) return na - nb;
+      return a.localeCompare(b);
+    });
+  }
+  var n = getTotalRooms(), ids = [];
+  for (var i = 1; i <= n; i++) ids.push(String(i));
+  return ids;
+}
+
+function getShortRoomLabel(id) {
+  var name = getRoomNames()[String(id)];
+  if (!name) return id;
+  return id + ' ' + name.slice(0, 4);
+}
+
+function renderOccupazione() {
+  var main = document.getElementById('main-content');
+  main.innerHTML =
+    '<div class="occ-wrapper">' +
+      '<div class="occ-header">' +
+        '<div class="occ-header-row">' +
+          '<button class="occ-nav-btn" id="occ-prev">◀</button>' +
+          '<div class="occ-month-label" id="occ-month-label"></div>' +
+          '<button class="occ-nav-btn" id="occ-next">▶</button>' +
+        '</div>' +
+        '<div class="occ-weekdays-bar">' +
+          ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'].map(function(d){
+            return '<div class="occ-weekday">' + d + '</div>';
+          }).join('') +
+        '</div>' +
+      '</div>' +
+      '<div class="occ-body">' +
+        '<div class="occ-cells" id="occ-cells">' +
+          '<div style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;' +
+          'gap:10px;padding:40px;color:#64748b"><div class="spinner"></div><span>Caricamento…</span></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="occ-legend">' +
+      '<span class="occ-legend-item"><span class="occ-legend-dot"></span>Pieno</span>' +
+      '<span class="occ-legend-item"><span class="occ-legend-dot"></span>1 libera</span>' +
+      '<span class="occ-legend-item"><span class="occ-legend-dot"></span>2 libere</span>' +
+      '<span class="occ-legend-item"><span class="occ-legend-dot"></span>3+ libere</span>' +
+    '</div>';
+
+  updateOccMonthLabel();
+
+  document.getElementById('occ-prev').addEventListener('click', function() {
+    occCalDate = new Date(occCalDate.getFullYear(), occCalDate.getMonth() - 1, 1);
+    updateOccMonthLabel();
+    fetchOccupazione();
+  });
+  document.getElementById('occ-next').addEventListener('click', function() {
+    occCalDate = new Date(occCalDate.getFullYear(), occCalDate.getMonth() + 1, 1);
+    updateOccMonthLabel();
+    fetchOccupazione();
+  });
+
+  fetchOccupazione();
+}
+
+function updateOccMonthLabel() {
+  var el = document.getElementById('occ-month-label');
+  if (el) el.textContent = MESI[occCalDate.getMonth()] + ' ' + occCalDate.getFullYear();
+}
+
+function fetchOccupazione() {
+  var year  = occCalDate.getFullYear();
+  var month = occCalDate.getMonth();
+  var from  = year + '-' + String(month + 1).padStart(2, '0') + '-01';
+  var days  = new Date(year, month + 1, 0).getDate();
+
+  var cells = document.getElementById('occ-cells');
+  if (!cells) return;
+  cells.innerHTML =
+    '<div style="grid-column:1/-1;display:flex;align-items:center;justify-content:center;' +
+    'gap:10px;padding:40px;color:#64748b"><div class="spinner"></div><span>Caricamento…</span></div>';
+
+  var apiUrl = getApiUrl();
+  if (!apiUrl) {
+    cells.innerHTML =
+      '<div style="grid-column:1/-1;padding:16px;color:#92400e;font-size:.85rem">' +
+      '⚙️ Configura URL e Token nelle impostazioni.</div>';
+    return;
+  }
+
+  var token = getApiToken();
+  var url = apiUrl +
+    '?action=occupancy' +
+    '&from='       + encodeURIComponent(from) +
+    '&days='       + days +
+    '&full=1&detail=1' +
+    '&totalRooms=' + getTotalRooms() +
+    (token ? '&token=' + encodeURIComponent(token) : '');
+
+  fetch(url)
+    .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function(json) {
+      if (!json.success) throw new Error(json.error || 'Errore');
+      renderOccupazioneCalendar(year, month, json.data);
+    })
+    .catch(function(err) {
+      var c = document.getElementById('occ-cells');
+      if (c) c.innerHTML =
+        '<div style="grid-column:1/-1;padding:16px;color:#991b1b;font-size:.85rem">' +
+        '❌ ' + err.message +
+        '<br><small>Ricorda di fare il nuovo deploy di Apps Script dopo aver aggiornato Code.gs.</small></div>';
+    });
+}
+
+function renderOccupazioneCalendar(year, month, data) {
+  var cells = document.getElementById('occ-cells');
+  if (!cells) return;
+  cells.innerHTML = '';
+
+  var lookup = {};
+  data.forEach(function(d) { lookup[d.date] = d; });
+
+  var allRooms    = getAllRoomIds();
+  var today       = new Date();
+  var daysInMonth = new Date(year, month + 1, 0).getDate();
+  var firstDow    = new Date(year, month, 1).getDay();
+  var offset      = (firstDow === 0) ? 6 : firstDow - 1;
+
+  for (var i = 0; i < offset; i++) {
+    var empty = document.createElement('div');
+    empty.className = 'occ-cell occ-empty';
+    cells.appendChild(empty);
+  }
+
+  for (var d = 1; d <= daysInMonth; d++) {
+    var dateStr      = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    var entry        = lookup[dateStr];
+    var occupiedRooms = entry ? (entry.occupiedRooms || []) : [];
+    var freeRooms    = allRooms.filter(function(id) { return occupiedRooms.indexOf(id) === -1; });
+    var freeCount    = freeRooms.length;
+
+    var dow    = new Date(year, month, d).getDay();
+    var isWknd = (dow === 0 || dow === 6);
+    var isTdy  = (year === today.getFullYear() && month === today.getMonth() && d === today.getDate());
+
+    var cls = 'occ-cell';
+    if (isWknd) cls += ' occ-weekend';
+    if (freeCount === 0)      cls += ' occ-full';
+    else if (freeCount === 1) cls += ' occ-one';
+    else if (freeCount === 2) cls += ' occ-two';
+    if (isTdy) cls += ' occ-today';
+
+    var cell = document.createElement('div');
+    cell.className = cls;
+
+    var dayEl = document.createElement('div');
+    dayEl.className = 'occ-day-num';
+    dayEl.textContent = d;
+    cell.appendChild(dayEl);
+
+    if (freeCount === 0) {
+      var fullEl = document.createElement('div');
+      fullEl.className = 'occ-full-label';
+      fullEl.textContent = 'PIENO';
+      cell.appendChild(fullEl);
+    } else {
+      var wrap = document.createElement('div');
+      wrap.className = 'occ-chips';
+      freeRooms.forEach(function(id) {
+        var chip = document.createElement('div');
+        chip.className = 'occ-chip';
+        chip.textContent = getShortRoomLabel(id);
+        wrap.appendChild(chip);
+      });
+      cell.appendChild(wrap);
     }
 
     cells.appendChild(cell);
