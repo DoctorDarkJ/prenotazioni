@@ -1838,11 +1838,15 @@ function renderOccupazioneCalendar(year, month, data) {
     cells.appendChild(empty);
   }
 
+  var validRoomIds = getAllRoomIds(); // camere configurate nelle impostazioni
+
   for (var d = 1; d <= daysInMonth; d++) {
     var dateStr   = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
     var entry     = lookup[dateStr];
-    // freeRooms viene sempre dal backend; null = giorno fuori dal lookup (tutti liberi)
-    var freeRooms = (entry && Array.isArray(entry.freeRooms)) ? entry.freeRooms : null;
+    // Filtra freeRooms tenendo solo le camere valide (esclude "-", "MOONLIGHT", ecc.)
+    var freeRooms = (entry && Array.isArray(entry.freeRooms))
+      ? entry.freeRooms.filter(function(id) { return validRoomIds.indexOf(id) !== -1; })
+      : null;
     var freeCount = freeRooms !== null ? freeRooms.length : getTotalRooms();
 
     var dow    = new Date(year, month, d).getDay();
