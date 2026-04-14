@@ -1604,12 +1604,18 @@ function fetchCalendarMonth() {
   }
 
   var token = getApiToken();
+  var roomNamesMap2 = getRoomNames();
+  var validRoomNames2 = Object.keys(roomNamesMap2).map(function(k) { return roomNamesMap2[k]; })
+    .filter(function(v) { return v && v.trim(); });
+  var roomsParam2 = validRoomNames2.length > 0 ? '&rooms=' + encodeURIComponent(validRoomNames2.join(',')) : '';
+
   var url = apiUrl +
     '?action=occupancy' +
     '&from='        + encodeURIComponent(from) +
     '&days='        + days +
     '&full=1' +
     '&totalRooms='  + getTotalRooms() +
+    roomsParam2 +
     (token ? '&token=' + encodeURIComponent(token) : '');
 
   fetch(url)
@@ -1783,12 +1789,20 @@ function fetchOccupazione() {
   }
 
   var token = getApiToken();
+  // Costruisce la lista delle camere valide dai nomi configurati nelle impostazioni
+  // (i valori corrispondono ai nomi reali usati nel foglio Google, es. "CAMERA 1")
+  var roomNamesMap = getRoomNames();
+  var validRoomNames = Object.keys(roomNamesMap).map(function(k) { return roomNamesMap[k]; })
+    .filter(function(v) { return v && v.trim(); });
+  var roomsParam = validRoomNames.length > 0 ? '&rooms=' + encodeURIComponent(validRoomNames.join(',')) : '';
+
   var url = apiUrl +
     '?action=occupancy' +
     '&from='       + encodeURIComponent(from) +
     '&days='       + days +
     '&full=1&detail=1' +
     '&totalRooms=' + getTotalRooms() +
+    roomsParam +
     (token ? '&token=' + encodeURIComponent(token) : '');
 
   fetch(url)
@@ -1838,16 +1852,12 @@ function renderOccupazioneCalendar(year, month, data) {
     cells.appendChild(empty);
   }
 
-  var validRoomIds = getAllRoomIds(); // camere configurate nelle impostazioni
-
   for (var d = 1; d <= daysInMonth; d++) {
     var dateStr   = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
     var entry     = lookup[dateStr];
-    // Filtra freeRooms tenendo solo le camere valide (esclude "-", "MOONLIGHT", ecc.)
-    var freeRooms = (entry && Array.isArray(entry.freeRooms))
-      ? entry.freeRooms.filter(function(id) { return validRoomIds.indexOf(id) !== -1; })
-      : null;
-    var freeCount = freeRooms !== null ? freeRooms.length : getTotalRooms();
+    // L'API ora filtra già le camere valide, usiamo freeRooms direttamente
+    var freeRooms = (entry && Array.isArray(entry.freeRooms)) ? entry.freeRooms : null;
+    var freeCount = freeRooms !== null ? freeRooms.length : (entry ? entry.free : getTotalRooms());
 
     var dow    = new Date(year, month, d).getDay();
     var isWknd = (dow === 0 || dow === 6);
