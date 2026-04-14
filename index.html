@@ -1814,7 +1814,6 @@ function renderOccupazioneCalendar(year, month, data) {
   var lookup = {};
   data.forEach(function(d) { lookup[d.date] = d; });
 
-  var allRooms    = getAllRoomIds();
   var today       = new Date();
   var daysInMonth = new Date(year, month + 1, 0).getDate();
   var firstDow    = new Date(year, month, 1).getDay();
@@ -1827,11 +1826,10 @@ function renderOccupazioneCalendar(year, month, data) {
   }
 
   for (var d = 1; d <= daysInMonth; d++) {
-    var dateStr      = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
-    var entry        = lookup[dateStr];
-    var occupiedRooms = entry ? (entry.occupiedRooms || []) : [];
-    var freeRooms    = allRooms.filter(function(id) { return occupiedRooms.indexOf(id) === -1; });
-    var freeCount    = freeRooms.length;
+    var dateStr   = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+    var entry     = lookup[dateStr];
+    var freeRooms = entry ? (entry.freeRooms || []) : getAllRoomIds();
+    var freeCount = freeRooms.length;
 
     var dow    = new Date(year, month, d).getDay();
     var isWknd = (dow === 0 || dow === 6);
