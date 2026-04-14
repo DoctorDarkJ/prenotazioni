@@ -1814,6 +1814,19 @@ function renderOccupazioneCalendar(year, month, data) {
   var lookup = {};
   data.forEach(function(d) { lookup[d.date] = d; });
 
+  // Rileva se il backend supporta freeRooms (nuovo deploy)
+  var hasDetailSupport = data.some(function(d) { return Array.isArray(d.freeRooms); });
+
+  if (!hasDetailSupport && data.length > 0) {
+    cells.innerHTML =
+      '<div style="grid-column:1/-1;padding:14px 12px;background:#fef3c7;border:1px solid #fcd34d;' +
+      'border-radius:10px;color:#92400e;font-size:.82rem;margin:2px">' +
+      '⚠️ <strong>Aggiorna il deploy su Apps Script</strong> per vedere le camere libere.<br>' +
+      '<small>Distribuisci → Gestisci distribuzioni → ✏️ → Versione: <strong>Nuova versione</strong> → Salva</small>' +
+      '</div>';
+    return;
+  }
+
   var today       = new Date();
   var daysInMonth = new Date(year, month + 1, 0).getDate();
   var firstDow    = new Date(year, month, 1).getDay();
@@ -1828,8 +1841,9 @@ function renderOccupazioneCalendar(year, month, data) {
   for (var d = 1; d <= daysInMonth; d++) {
     var dateStr   = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
     var entry     = lookup[dateStr];
-    var freeRooms = entry ? (entry.freeRooms || []) : getAllRoomIds();
-    var freeCount = freeRooms.length;
+    // freeRooms viene sempre dal backend; null = giorno fuori dal lookup (tutti liberi)
+    var freeRooms = (entry && Array.isArray(entry.freeRooms)) ? entry.freeRooms : null;
+    var freeCount = freeRooms !== null ? freeRooms.length : getTotalRooms();
 
     var dow    = new Date(year, month, d).getDay();
     var isWknd = (dow === 0 || dow === 6);
@@ -1855,7 +1869,7 @@ function renderOccupazioneCalendar(year, month, data) {
       fullEl.className = 'occ-full-label';
       fullEl.textContent = 'PIENO';
       cell.appendChild(fullEl);
-    } else {
+    } else if (freeRooms !== null) {
       var wrap = document.createElement('div');
       wrap.className = 'occ-chips';
       freeRooms.forEach(function(id) {
@@ -1865,6 +1879,13 @@ function renderOccupazioneCalendar(year, month, data) {
         wrap.appendChild(chip);
       });
       cell.appendChild(wrap);
+    } else {
+      // Tutti liberi (nessuna prenotazione quel giorno)
+      var allFreeEl = document.createElement('div');
+      allFreeEl.className = 'occ-full-label';
+      allFreeEl.style.color = '#16a34a';
+      allFreeEl.textContent = 'TUTTO LIBERO';
+      cell.appendChild(allFreeEl);
     }
 
     cells.appendChild(cell);
