@@ -836,6 +836,148 @@
       color: var(--text-muted);
       font-style: italic;
     }
+    /* ── Nuova Prenotazione form ───────────────────────────── */
+    .nprn-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .nprn-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .nprn-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+    .nprn-card-header.periodo  { background: linear-gradient(90deg, #1e3a5f, #2563eb); }
+    .nprn-card-header.ospiti   { background: linear-gradient(90deg, #065f46, #059669); }
+    .nprn-card-header.pagamento{ background: linear-gradient(90deg, #7c2d12, #ea580c); }
+    .nprn-card-header.extra    { background: linear-gradient(90deg, #3b0764, #7c3aed); }
+    .nprn-card-body {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .nprn-row {
+      display: flex;
+      gap: 10px;
+    }
+    .nprn-field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+    .nprn-label {
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .nprn-label .req { color: #ef4444; margin-left: 1px; }
+    .nprn-input, .nprn-select, .nprn-textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      font-size: .87rem;
+      background: var(--bg);
+      color: var(--text);
+      transition: border-color .15s, box-shadow .15s;
+      box-sizing: border-box;
+    }
+    .nprn-input:focus, .nprn-select:focus, .nprn-textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+    }
+    .nprn-input.error, .nprn-select.error {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239,68,68,.1);
+    }
+    .nprn-textarea { resize: vertical; min-height: 70px; }
+    /* Counter +/- */
+    .nprn-counter {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      overflow: hidden;
+      background: var(--bg);
+      height: 38px;
+    }
+    .nprn-counter-btn {
+      width: 36px;
+      height: 100%;
+      border: none;
+      background: transparent;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #2563eb;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .12s;
+      flex-shrink: 0;
+    }
+    .nprn-counter-btn:active { background: #dbeafe; }
+    .nprn-counter-val {
+      flex: 1;
+      text-align: center;
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--text);
+      pointer-events: none;
+    }
+    /* Submit */
+    .nprn-submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(90deg, #1e3a5f, #2563eb);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: .03em;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37,99,235,.35);
+      transition: opacity .15s, transform .1s;
+    }
+    .nprn-submit-btn:active { opacity: .88; transform: scale(.99); }
+    .nprn-submit-btn:disabled { opacity: .5; cursor: not-allowed; }
+    .nprn-error-msg {
+      color: #dc2626;
+      font-size: .8rem;
+      font-weight: 600;
+      padding: 8px 12px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+    }
+    .nprn-success-msg {
+      color: #166534;
+      font-size: .85rem;
+      font-weight: 700;
+      padding: 12px;
+      background: #dcfce7;
+      border: 1px solid #86efac;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .nprn-hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -884,6 +1026,7 @@
     <button class="view-tab" id="tab-dettaglio">📋 Dettaglio</button>
     <button class="view-tab" id="tab-riassunto">📝 Riassunto</button>
     <button class="view-tab" id="tab-occupazione">🛏️ Camere</button>
+    <button class="view-tab" id="tab-nuova">✚ New</button>
   </div>
 </header>
 
@@ -953,7 +1096,7 @@
       <input class="modal-input" id="total-rooms-input" type="number"
              min="1" max="50" placeholder="9" style="width:100px" />
       <p class="modal-hint" style="margin-top:6px">
-        Usato nel calcolo del report disponibilità.
+        Usato nel calcolo della disponibilità camere.
       </p>
     </div>
 
@@ -1159,10 +1302,13 @@ function setView(view) {
   document.getElementById('tab-dettaglio').classList.toggle('active',    view === 'dettaglio');
   document.getElementById('tab-riassunto').classList.toggle('active',    view === 'riassunto');
   document.getElementById('tab-occupazione').classList.toggle('active',  view === 'occupazione');
-  document.querySelector('header').classList.toggle('report-mode', view === 'occupazione');
+  document.getElementById('tab-nuova').classList.toggle('active',        view === 'nuova');
+  document.querySelector('header').classList.toggle('report-mode', view === 'occupazione' || view === 'nuova');
 
   if (view === 'occupazione') {
     renderOccupazione();
+  } else if (view === 'nuova') {
+    renderNuovaPrenotazione();
   } else if (cachedBookings !== null) {
     if (view === 'riassunto') renderRiassunto(cachedBookings);
     else renderBookings(cachedBookings);
@@ -1174,6 +1320,7 @@ function setView(view) {
 document.getElementById('tab-dettaglio').addEventListener('click',   function() { setView('dettaglio'); });
 document.getElementById('tab-riassunto').addEventListener('click',   function() { setView('riassunto'); });
 document.getElementById('tab-occupazione').addEventListener('click', function() { setView('occupazione'); });
+document.getElementById('tab-nuova').addEventListener('click',       function() { setView('nuova'); });
 
 document.getElementById('prev-btn').addEventListener('click', function() {
   currentDate = addDays(currentDate, -1);
@@ -1852,6 +1999,334 @@ document.getElementById('modal-close-btn').addEventListener('click', function() 
 modal.addEventListener('click', function(e) {
   if (e.target === modal) modal.classList.remove('open');
 });
+
+// ══════════════════════════════════════════════════════════════
+// Vista NUOVA PRENOTAZIONE
+// ══════════════════════════════════════════════════════════════
+function renderNuovaPrenotazione() {
+  var main = document.getElementById('main-content');
+  // Prefill check-in con data corrente
+  var todayStr = toISOLocal(new Date());
+
+  main.innerHTML =
+    '<div class="nprn-wrapper">' +
+
+    // ── Periodo ──────────────────────────────────────────────
+    '<div class="nprn-card">' +
+      '<div class="nprn-card-header periodo">📅 Periodo &amp; Camera</div>' +
+      '<div class="nprn-card-body">' +
+        '<div class="nprn-row">' +
+          '<div class="nprn-field">' +
+            '<label class="nprn-label">Check-in <span class="req">*</span></label>' +
+            '<input class="nprn-input" id="nprn-checkin" type="date" value="' + todayStr + '" />' +
+          '</div>' +
+          '<div class="nprn-field">' +
+            '<label class="nprn-label">Check-out <span class="req">*</span></label>' +
+            '<input class="nprn-input" id="nprn-checkout" type="date" value="' + todayStr + '" />' +
+          '</div>' +
+        '</div>' +
+        '<div class="nprn-field">' +
+          '<label class="nprn-label">Camera <span class="req">*</span></label>' +
+          '<select class="nprn-select" id="nprn-camera">' +
+            '<option value="">— seleziona date prima —</option>' +
+          '</select>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    // ── Ospiti ───────────────────────────────────────────────
+    '<div class="nprn-card">' +
+      '<div class="nprn-card-header ospiti">👤 Ospiti</div>' +
+      '<div class="nprn-card-body">' +
+        '<div class="nprn-field">' +
+          '<label class="nprn-label">Nome <span class="req">*</span></label>' +
+          '<input class="nprn-input" id="nprn-nome" type="text" placeholder="Cognome Nome" autocomplete="off" />' +
+        '</div>' +
+        '<div class="nprn-row">' +
+          '<div class="nprn-field">' +
+            '<label class="nprn-label">Adulti <span class="req">*</span></label>' +
+            '<div class="nprn-counter">' +
+              '<button class="nprn-counter-btn" data-target="nprn-adulti" data-delta="-1">−</button>' +
+              '<span class="nprn-counter-val" id="nprn-adulti">1</span>' +
+              '<button class="nprn-counter-btn" data-target="nprn-adulti" data-delta="1">+</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="nprn-field">' +
+            '<label class="nprn-label">Bambini</label>' +
+            '<div class="nprn-counter">' +
+              '<button class="nprn-counter-btn" data-target="nprn-bimbi" data-delta="-1">−</button>' +
+              '<span class="nprn-counter-val" id="nprn-bimbi">0</span>' +
+              '<button class="nprn-counter-btn" data-target="nprn-bimbi" data-delta="1">+</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="nprn-field">' +
+            '<label class="nprn-label">KIM <span class="req">*</span></label>' +
+            '<select class="nprn-select" id="nprn-kim">' +
+              '<option value="-">-</option>' +
+              '<option value="K">K</option>' +
+              '<option value="M">M</option>' +
+            '</select>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    // ── Pagamento ────────────────────────────────────────────
+    '<div class="nprn-card">' +
+      '<div class="nprn-card-header pagamento">💳 Pagamento</div>' +
+      '<div class="nprn-card-body">' +
+        '<div class="nprn-field">' +
+          '<label class="nprn-label">Canale <span class="req">*</span></label>' +
+          '<select class="nprn-select" id="nprn-canale">' +
+            '<option value="">— scegli —</option>' +
+            '<option value="BOOKING">BOOKING</option>' +
+            '<option value="BOOKING FATTURA">BOOKING FATTURA</option>' +
+            '<option value="CASH">CASH</option>' +
+            '<option value="COR">COR</option>' +
+          '</select>' +
+        '</div>' +
+        '<div class="nprn-row" id="nprn-row-tassa">' +
+          '<div class="nprn-field">' +
+            '<label class="nprn-label">Tassa (€)</label>' +
+            '<input class="nprn-input" id="nprn-tassa" type="number" min="0" step="0.01" placeholder="0.00" />' +
+          '</div>' +
+        '</div>' +
+        '<div class="nprn-row">' +
+          '<div class="nprn-field" id="nprn-field-pagareloco">' +
+            '<label class="nprn-label">Pagare Loco (€)</label>' +
+            '<input class="nprn-input" id="nprn-pagareloco" type="number" min="0" step="0.01" placeholder="0.00" />' +
+          '</div>' +
+          '<div class="nprn-field" id="nprn-field-ricevuto">' +
+            '<label class="nprn-label">Ricevuto (€)</label>' +
+            '<input class="nprn-input" id="nprn-ricevuto" type="number" min="0" step="0.01" placeholder="0.00" />' +
+          '</div>' +
+        '</div>' +
+        '<div class="nprn-row" id="nprn-row-commissioni">' +
+          '<div class="nprn-field">' +
+            '<label class="nprn-label">Commissioni (€)</label>' +
+            '<input class="nprn-input" id="nprn-commissioni" type="number" min="0" step="0.01" placeholder="0.00" />' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    // ── Extra ────────────────────────────────────────────────
+    '<div class="nprn-card">' +
+      '<div class="nprn-card-header extra">🚕 Extra &amp; Note</div>' +
+      '<div class="nprn-card-body">' +
+        '<div class="nprn-row">' +
+          '<div class="nprn-field">' +
+            '<label class="nprn-label">Taxi (€)</label>' +
+            '<input class="nprn-input" id="nprn-taxi" type="number" min="0" step="0.01" placeholder="0.00" />' +
+          '</div>' +
+          '<div class="nprn-field">' +
+            '<label class="nprn-label">Parcheggio (€)</label>' +
+            '<input class="nprn-input" id="nprn-parcheggio" type="number" min="0" step="0.01" placeholder="0.00" />' +
+          '</div>' +
+        '</div>' +
+        '<div class="nprn-field">' +
+          '<label class="nprn-label">Note</label>' +
+          '<textarea class="nprn-textarea" id="nprn-note" placeholder="Annotazioni libere…"></textarea>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+
+    '<div id="nprn-msg"></div>' +
+    '<button class="nprn-submit-btn" id="nprn-submit">✓ Salva Prenotazione</button>' +
+    '</div>';
+
+  // Inizializza logica form
+  nprnInit();
+}
+
+function nprnInit() {
+  // Counters
+  document.querySelectorAll('.nprn-counter-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var targetId = this.dataset.target;
+      var delta    = parseInt(this.dataset.delta);
+      var el       = document.getElementById(targetId);
+      var val      = Math.max(0, parseInt(el.textContent) + delta);
+      el.textContent = val;
+    });
+  });
+
+  // Date change → aggiorna camera dropdown
+  document.getElementById('nprn-checkin').addEventListener('change',  nprnUpdateCamera);
+  document.getElementById('nprn-checkout').addEventListener('change', nprnUpdateCamera);
+
+  // Canale change → mostra/nascondi campi
+  document.getElementById('nprn-canale').addEventListener('change', nprnUpdateCanaleFields);
+
+  // Submit
+  document.getElementById('nprn-submit').addEventListener('click', nprnSubmit);
+
+  // Stato iniziale
+  nprnUpdateCanaleFields();
+}
+
+function nprnUpdateCanaleFields() {
+  var canale    = (document.getElementById('nprn-canale').value || '').toUpperCase();
+  var isBooking = canale.indexOf('BOOKING') === 0;
+  var isCash    = canale === 'CASH';
+
+  // Tassa: nascosta per CASH
+  nprnToggle('nprn-row-tassa', !isCash);
+  // Pagare Loco: nascosta per BOOKING*
+  nprnToggle('nprn-field-pagareloco', !isBooking);
+  // Commissioni: solo per BOOKING*
+  nprnToggle('nprn-row-commissioni', isBooking);
+}
+
+function nprnToggle(id, visible) {
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle('nprn-hidden', !visible);
+}
+
+function nprnUpdateCamera() {
+  var checkin  = document.getElementById('nprn-checkin').value;
+  var checkout = document.getElementById('nprn-checkout').value;
+  var sel      = document.getElementById('nprn-camera');
+
+  if (!checkin || !checkout || checkin >= checkout) {
+    sel.innerHTML = '<option value="">— check-in deve essere < check-out —</option>';
+    return;
+  }
+
+  sel.innerHTML = '<option value="">Caricamento…</option>';
+
+  var apiUrl = getApiUrl();
+  if (!apiUrl) {
+    sel.innerHTML = '<option value="">⚙️ Configura URL nelle impostazioni</option>';
+    return;
+  }
+
+  var token        = getApiToken();
+  var roomNamesMap = getRoomNames();
+  var roomValues   = Object.keys(roomNamesMap).map(function(k) { return roomNamesMap[k]; })
+    .filter(function(v) { return v && v.trim(); });
+  var roomsParam   = roomValues.length > 0 ? '&rooms=' + encodeURIComponent(roomValues.join(',')) : '';
+
+  var url = apiUrl + '?action=availableRooms' +
+    '&from='  + encodeURIComponent(checkin) +
+    '&to='    + encodeURIComponent(checkout) +
+    roomsParam +
+    (token ? '&token=' + encodeURIComponent(token) : '');
+
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(json) {
+      if (!json.success) throw new Error(json.error || 'Errore');
+      var rooms = json.rooms || [];
+      var html = '<option value="-">— (nessuna camera)</option>';
+      rooms.forEach(function(r) {
+        html += '<option value="' + r + '">' + r + '</option>';
+      });
+      if (rooms.length === 0) {
+        html = '<option value="">⛔ Nessuna camera libera in questo periodo</option>';
+      }
+      sel.innerHTML = html;
+    })
+    .catch(function() {
+      sel.innerHTML = '<option value="-">— (nessuna camera)</option>';
+    });
+}
+
+function nprnSubmit() {
+  // Raccoglie valori
+  var checkin    = document.getElementById('nprn-checkin').value;
+  var checkout   = document.getElementById('nprn-checkout').value;
+  var nome       = document.getElementById('nprn-nome').value.trim();
+  var adulti     = parseInt(document.getElementById('nprn-adulti').textContent) || 0;
+  var bimbi      = parseInt(document.getElementById('nprn-bimbi').textContent) || 0;
+  var camera     = document.getElementById('nprn-camera').value;
+  var kim        = document.getElementById('nprn-kim').value;
+  var canale     = document.getElementById('nprn-canale').value;
+
+  var isBooking  = canale.toUpperCase().indexOf('BOOKING') === 0;
+  var isCash     = canale.toUpperCase() === 'CASH';
+
+  var tassa      = !isCash    ? (document.getElementById('nprn-tassa').value || '')    : '';
+  var pagareLoco = !isBooking ? (document.getElementById('nprn-pagareloco').value || '') : '';
+  var ricevuto   = document.getElementById('nprn-ricevuto').value || '';
+  var commissioni= isBooking  ? (document.getElementById('nprn-commissioni').value || '') : '';
+  var taxi       = document.getElementById('nprn-taxi').value || '';
+  var parcheggio = document.getElementById('nprn-parcheggio').value || '';
+  var note       = document.getElementById('nprn-note').value.trim();
+
+  // Validazione
+  var errors = [];
+  if (!checkin)             errors.push('Check-in obbligatorio');
+  if (!checkout)            errors.push('Check-out obbligatorio');
+  if (checkin && checkout && checkin > checkout)
+                            errors.push('Check-in deve essere ≤ Check-out');
+  if (!nome)                errors.push('Nome obbligatorio');
+  if (adulti < 1)           errors.push('Almeno 1 adulto obbligatorio');
+  if (!camera)              errors.push('Camera obbligatoria');
+  if (!kim)                 errors.push('KIM obbligatorio');
+  if (!canale)              errors.push('Canale obbligatorio');
+
+  var msgEl = document.getElementById('nprn-msg');
+  if (errors.length > 0) {
+    msgEl.innerHTML = '<div class="nprn-error-msg">⚠️ ' + errors.join(' · ') + '</div>';
+    return;
+  }
+  msgEl.innerHTML = '';
+
+  var apiUrl = getApiUrl();
+  if (!apiUrl) {
+    msgEl.innerHTML = '<div class="nprn-error-msg">⚙️ Configura URL nelle impostazioni</div>';
+    return;
+  }
+
+  var btn = document.getElementById('nprn-submit');
+  btn.disabled = true;
+  btn.textContent = '⏳ Salvataggio…';
+
+  var payload = {
+    token:   getApiToken(),
+    action:  'addBooking',
+    data: {
+      checkin:     checkin,
+      checkout:    checkout,
+      nome:        nome,
+      adulti:      adulti,
+      bimbi:       bimbi,
+      camera:      camera,
+      kim:         kim,
+      canale:      canale,
+      tassa:       tassa,
+      pagareLoco:  pagareLoco,
+      ricevuto:    ricevuto,
+      commissioni: commissioni,
+      taxi:        taxi,
+      parcheggio:  parcheggio,
+      note:        note
+    }
+  };
+
+  fetch(apiUrl, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(payload)
+  })
+    .then(function(r) { return r.json(); })
+    .then(function(json) {
+      if (!json.success) throw new Error(json.error || 'Errore dal server');
+      msgEl.innerHTML =
+        '<div class="nprn-success-msg">✅ Prenotazione salvata con successo!</div>';
+      btn.disabled = false;
+      btn.textContent = '✓ Salva Prenotazione';
+      // Reset form dopo 1.5s
+      setTimeout(function() { renderNuovaPrenotazione(); }, 1500);
+    })
+    .catch(function(err) {
+      msgEl.innerHTML =
+        '<div class="nprn-error-msg">❌ ' + err.message + '</div>';
+      btn.disabled = false;
+      btn.textContent = '✓ Salva Prenotazione';
+    });
+}
 
 // ══════════════════════════════════════════════════════════════
 // Avvio
