@@ -2260,12 +2260,12 @@ function nprnSubmit() {
   var isBooking  = canale.toUpperCase().indexOf('BOOKING') === 0;
   var isCash     = canale.toUpperCase() === 'CASH';
 
-  var tassa      = !isCash    ? (document.getElementById('nprn-tassa').value || '')    : '';
-  var pagareLoco = !isBooking ? (document.getElementById('nprn-pagareloco').value || '') : '';
-  var ricevuto   = document.getElementById('nprn-ricevuto').value || '';
-  var commissioni= isBooking  ? (document.getElementById('nprn-commissioni').value || '') : '';
-  var taxi       = document.getElementById('nprn-taxi').value || '';
-  var parcheggio = document.getElementById('nprn-parcheggio').value || '';
+  var tassa      = !isCash    ? (document.getElementById('nprn-tassa').value || '0')    : '';
+  var pagareLoco = !isBooking ? (document.getElementById('nprn-pagareloco').value || '0') : '';
+  var ricevuto   = !isCash    ? (document.getElementById('nprn-ricevuto').value || '0')   : '';
+  var commissioni= isBooking  ? (document.getElementById('nprn-commissioni').value || '0') : '';
+  var taxi       = document.getElementById('nprn-taxi').value || '0';
+  var parcheggio = document.getElementById('nprn-parcheggio').value || '0';
   var note       = document.getElementById('nprn-note').value.trim();
 
   // Validazione
