@@ -2307,7 +2307,7 @@ function nprnSubmit() {
 
   fetch(apiUrl, {
     method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'text/plain' },  // text/plain evita il preflight CORS
     body:    JSON.stringify(payload)
   })
     .then(function(r) { return r.json(); })
