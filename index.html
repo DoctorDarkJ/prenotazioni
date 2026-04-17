@@ -2155,6 +2155,14 @@ function nprnInit() {
   document.getElementById('nprn-checkin').addEventListener('change',  nprnUpdateCamera);
   document.getElementById('nprn-checkout').addEventListener('change', nprnUpdateCamera);
 
+  // KIM "-" → precompila Canale con CASH e aggiorna visibilità
+  document.getElementById('nprn-kim').addEventListener('change', function() {
+    if (this.value === '-') {
+      document.getElementById('nprn-canale').value = 'CASH';
+      nprnUpdateCanaleFields();
+    }
+  });
+
   // Canale change → mostra/nascondi campi
   document.getElementById('nprn-canale').addEventListener('change', nprnUpdateCanaleFields);
 
@@ -2174,6 +2182,8 @@ function nprnUpdateCanaleFields() {
   nprnToggle('nprn-row-tassa', !isCash);
   // Pagare Loco: nascosta per BOOKING*
   nprnToggle('nprn-field-pagareloco', !isBooking);
+  // Ricevuto: nascosto per CASH (non incassa nulla tramite portale)
+  nprnToggle('nprn-field-ricevuto', !isCash);
   // Commissioni: solo per BOOKING*
   nprnToggle('nprn-row-commissioni', isBooking);
 }
@@ -2218,6 +2228,10 @@ function nprnUpdateCamera() {
     .then(function(json) {
       if (!json.success) throw new Error(json.error || 'Errore');
       var rooms = json.rooms || [];
+      // Escludi valori non validi (MOONLIGHT, "-", ecc.)
+      rooms = rooms.filter(function(r) {
+        return r && r !== '-' && r.toUpperCase() !== 'MOONLIGHT';
+      });
       var html = '<option value="-">— (nessuna camera)</option>';
       rooms.forEach(function(r) {
         html += '<option value="' + r + '">' + r + '</option>';
