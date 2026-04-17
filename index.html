@@ -575,7 +575,7 @@
     .summary-chip.partenze span { color: var(--partenza); }
     .summary-chip.presenti span { color: var(--presente); }
 
-    /* ── Tab Dettaglio / Riassunto / Report ───────────────── */
+    /* ── Tab Dettaglio / Riassunto / Camere ───────────────── */
     .view-tabs {
       display: flex;
       gap: 6px;
@@ -599,167 +599,8 @@
       border-color: #fff;
     }
 
-    /* Nasconde navigazione data in modalità report */
+    /* Nasconde navigazione data in modalità occupazione */
     header.report-mode .date-nav { display: none; }
-
-    /* ── Vista Report disponibilità ────────────────────────── */
-    .report-controls {
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .report-controls-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .report-label {
-      font-size: .78rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .report-input {
-      flex: 1;
-      padding: 8px 10px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: .85rem;
-      background: var(--bg);
-      color: var(--text);
-    }
-    .report-days-group {
-      display: flex;
-      gap: 6px;
-    }
-    .report-days-btn {
-      flex: 1;
-      padding: 7px 0;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--bg);
-      font-size: .78rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      text-align: center;
-    }
-    .report-days-btn.active {
-      background: var(--header-bg);
-      color: #fff;
-      border-color: var(--header-bg);
-    }
-    .report-search-btn {
-      width: 100%;
-      padding: 11px;
-      background: var(--header-bg);
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: .9rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .report-search-btn:active { opacity: .85; }
-
-    /* ── Calendario disponibilità ───────────────────────────── */
-    .cal-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 12px 14px;
-    }
-    .cal-nav-btn {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      width: 36px; height: 36px;
-      font-size: .95rem;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .cal-nav-btn:active { opacity: .7; }
-    .cal-month-title {
-      font-weight: 700;
-      font-size: 1rem;
-      color: var(--text);
-    }
-    .cal-grid-wrapper {
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-    .cal-weekdays {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      background: var(--header-bg);
-    }
-    .cal-weekday {
-      color: #fff;
-      text-align: center;
-      font-size: .68rem;
-      font-weight: 700;
-      padding: 7px 0;
-    }
-    .cal-cells {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 1px;
-      background: var(--border);
-    }
-    .cal-cell {
-      background: #fff;
-      min-height: 50px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-      padding: 4px 2px;
-    }
-    .cal-cell.cal-empty   { background: var(--bg); }
-    .cal-cell.cal-full    { background: #dc2626; }
-    .cal-cell.cal-one     { background: #ea580c; }
-    .cal-cell.cal-two     { background: #eab308; }
-    .cal-cell.cal-today   { outline: 2px solid var(--header-bg); outline-offset: -2px; }
-    .cal-cell-day {
-      font-size: .7rem;
-      font-weight: 600;
-      line-height: 1;
-      color: var(--text-muted);
-    }
-    .cal-cell.cal-full .cal-cell-day,
-    .cal-cell.cal-one  .cal-cell-day { color: rgba(255,255,255,.8); }
-    .cal-cell.cal-two  .cal-cell-day { color: rgba(0,0,0,.45); }
-    .cal-cell-free {
-      font-size: 1.1rem;
-      font-weight: 800;
-      line-height: 1;
-      color: var(--text);
-    }
-    .cal-cell.cal-full .cal-cell-free { display: none; }
-    .cal-cell.cal-one  .cal-cell-free,
-    .cal-cell.cal-two  .cal-cell-free { color: #fff; }
-    .cal-cell.cal-two  .cal-cell-free { color: #1e293b; }
-    .cal-loading {
-      grid-column: 1 / -1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 40px;
-      color: var(--text-muted);
-      font-size: .9rem;
-      background: var(--surface);
-    }
 
     /* ── Vista Occupazione ─────────────────────────────────── */
     .occ-wrapper {
@@ -1042,7 +883,6 @@
   <div class="view-tabs">
     <button class="view-tab" id="tab-dettaglio">📋 Dettaglio</button>
     <button class="view-tab" id="tab-riassunto">📝 Riassunto</button>
-    <button class="view-tab" id="tab-report">📊 Report</button>
     <button class="view-tab" id="tab-occupazione">🛏️ Camere</button>
   </div>
 </header>
@@ -1272,10 +1112,8 @@ function roomLabel(camera, roomNames) {
 // ── Stato vista corrente ──────────────────────────────────────
 var currentView    = getDefaultView();
 var cachedBookings = null;
-var reportDays     = 90;
-
 // ══════════════════════════════════════════════════════════════
-// Utilità date
+// Vista OCCUPAZIONE — calendario camere libere
 // ══════════════════════════════════════════════════════════════
 var GIORNI = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
 var MESI   = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
@@ -1320,13 +1158,10 @@ function setView(view) {
   currentView = view;
   document.getElementById('tab-dettaglio').classList.toggle('active',    view === 'dettaglio');
   document.getElementById('tab-riassunto').classList.toggle('active',    view === 'riassunto');
-  document.getElementById('tab-report').classList.toggle('active',       view === 'report');
   document.getElementById('tab-occupazione').classList.toggle('active',  view === 'occupazione');
-  document.querySelector('header').classList.toggle('report-mode', view === 'report' || view === 'occupazione');
+  document.querySelector('header').classList.toggle('report-mode', view === 'occupazione');
 
-  if (view === 'report') {
-    renderReportControls();
-  } else if (view === 'occupazione') {
+  if (view === 'occupazione') {
     renderOccupazione();
   } else if (cachedBookings !== null) {
     if (view === 'riassunto') renderRiassunto(cachedBookings);
@@ -1338,7 +1173,6 @@ function setView(view) {
 
 document.getElementById('tab-dettaglio').addEventListener('click',   function() { setView('dettaglio'); });
 document.getElementById('tab-riassunto').addEventListener('click',   function() { setView('riassunto'); });
-document.getElementById('tab-report').addEventListener('click',      function() { setView('report'); });
 document.getElementById('tab-occupazione').addEventListener('click', function() { setView('occupazione'); });
 
 document.getElementById('prev-btn').addEventListener('click', function() {
@@ -1554,164 +1388,6 @@ function buildRiepilogoSection(cls, title, bookings, roomNames, showDetail) {
 
   section.appendChild(list);
   return section;
-}
-
-// ══════════════════════════════════════════════════════════════
-// Vista REPORT DISPONIBILITÀ — Calendario mensile
-// ══════════════════════════════════════════════════════════════
-var reportCalDate = (function() { var d = new Date(); d.setDate(1); return d; }());
-
-var CAL_DAYS = ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
-
-function renderReportControls() {
-  var main = document.getElementById('main-content');
-  main.innerHTML =
-    '<div class="cal-nav" id="cal-nav">' +
-      '<button class="cal-nav-btn" id="cal-prev">◀</button>' +
-      '<div class="cal-month-title" id="cal-month-title"></div>' +
-      '<button class="cal-nav-btn" id="cal-next">▶</button>' +
-    '</div>' +
-    '<div class="cal-grid-wrapper">' +
-      '<div class="cal-weekdays">' +
-        CAL_DAYS.map(function(d){ return '<div class="cal-weekday">' + d + '</div>'; }).join('') +
-      '</div>' +
-      '<div class="cal-cells" id="cal-cells">' +
-        '<div class="cal-loading"><div class="spinner"></div><span>Caricamento…</span></div>' +
-      '</div>' +
-    '</div>' +
-    '<div style="display:flex;gap:6px;flex-wrap:wrap;font-size:.72rem;color:var(--text-muted)">' +
-      '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#dc2626;display:inline-block"></span>Pieno</span>' +
-      '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#ea580c;display:inline-block"></span>1 libera</span>' +
-      '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#eab308;display:inline-block"></span>2 libere</span>' +
-      '<span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border-radius:3px;background:#fff;border:1px solid #e2e8f0;display:inline-block"></span>3+ libere</span>' +
-    '</div>';
-
-  updateCalMonthTitle();
-
-  document.getElementById('cal-prev').addEventListener('click', function() {
-    reportCalDate = new Date(reportCalDate.getFullYear(), reportCalDate.getMonth() - 1, 1);
-    updateCalMonthTitle();
-    fetchCalendarMonth();
-  });
-
-  document.getElementById('cal-next').addEventListener('click', function() {
-    reportCalDate = new Date(reportCalDate.getFullYear(), reportCalDate.getMonth() + 1, 1);
-    updateCalMonthTitle();
-    fetchCalendarMonth();
-  });
-
-  fetchCalendarMonth();
-}
-
-function updateCalMonthTitle() {
-  var el = document.getElementById('cal-month-title');
-  if (el) el.textContent = MESI[reportCalDate.getMonth()] + ' ' + reportCalDate.getFullYear();
-}
-
-function fetchCalendarMonth() {
-  var year  = reportCalDate.getFullYear();
-  var month = reportCalDate.getMonth();
-  var from  = year + '-' + String(month + 1).padStart(2, '0') + '-01';
-  var days  = new Date(year, month + 1, 0).getDate();
-
-  var cells = document.getElementById('cal-cells');
-  if (!cells) return;
-  cells.innerHTML = '<div class="cal-loading"><div class="spinner"></div><span>Caricamento…</span></div>';
-
-  var apiUrl = getApiUrl();
-  if (!apiUrl) {
-    cells.innerHTML =
-      '<div style="grid-column:1/-1;padding:14px;background:#fef3c7;border:1px solid #fcd34d;' +
-      'border-radius:12px;color:#92400e;font-size:.88rem;margin:8px">⚙️ Configura URL e Token nelle impostazioni.</div>';
-    return;
-  }
-
-  var token = getApiToken();
-  var roomNamesMap2 = getRoomNames();
-  var validRoomNames2 = Object.keys(roomNamesMap2).map(function(k) { return roomNamesMap2[k]; })
-    .filter(function(v) { return v && v.trim(); });
-  var roomsParam2 = validRoomNames2.length > 0 ? '&rooms=' + encodeURIComponent(validRoomNames2.join(',')) : '';
-
-  var url = apiUrl +
-    '?action=occupancy' +
-    '&from='        + encodeURIComponent(from) +
-    '&days='        + days +
-    '&full=1' +
-    '&totalRooms='  + getTotalRooms() +
-    roomsParam2 +
-    (token ? '&token=' + encodeURIComponent(token) : '');
-
-  fetch(url)
-    .then(function(res) {
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      return res.json();
-    })
-    .then(function(json) {
-      if (!json.success) throw new Error(json.error || 'Errore sconosciuto');
-      renderCalendar(year, month, json.data);
-    })
-    .catch(function(err) {
-      var c = document.getElementById('cal-cells');
-      if (c) c.innerHTML =
-        '<div style="grid-column:1/-1;padding:14px;background:#fef2f2;border:1px solid #fecaca;' +
-        'border-radius:12px;color:#991b1b;font-size:.88rem;margin:8px">' +
-        '❌ <strong>Errore</strong>: ' + err.message +
-        '<br><small>Ricorda di fare il nuovo deploy di Apps Script dopo aver aggiornato Code.gs.</small></div>';
-    });
-}
-
-function renderCalendar(year, month, data) {
-  var cells = document.getElementById('cal-cells');
-  if (!cells) return;
-  cells.innerHTML = '';
-
-  // Lookup: "YYYY-MM-DD" → freeCount
-  var lookup = {};
-  data.forEach(function(d) { lookup[d.date] = d.free; });
-
-  var today      = new Date();
-  var daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  // Italian week: Mon=0 … Sun=6; JS: Sun=0, Mon=1 … Sat=6
-  var firstDow = new Date(year, month, 1).getDay();
-  var offset   = (firstDow === 0) ? 6 : firstDow - 1;
-
-  // Empty padding cells
-  for (var i = 0; i < offset; i++) {
-    var empty = document.createElement('div');
-    empty.className = 'cal-cell cal-empty';
-    cells.appendChild(empty);
-  }
-
-  for (var d = 1; d <= daysInMonth; d++) {
-    var dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
-    var free    = lookup[dateStr]; // undefined if not returned
-
-    var cell = document.createElement('div');
-    var cls  = 'cal-cell';
-    if (free !== undefined) {
-      if      (free === 0) cls += ' cal-full';
-      else if (free === 1) cls += ' cal-one';
-      else if (free === 2) cls += ' cal-two';
-    }
-    var isToday = (year === today.getFullYear() && month === today.getMonth() && d === today.getDate());
-    if (isToday) cls += ' cal-today';
-    cell.className = cls;
-
-    var dayNum = document.createElement('div');
-    dayNum.className = 'cal-cell-day';
-    dayNum.textContent = d;
-    cell.appendChild(dayNum);
-
-    if (free !== undefined && free > 0) {
-      var freeEl = document.createElement('div');
-      freeEl.className = 'cal-cell-free';
-      freeEl.textContent = free;
-      cell.appendChild(freeEl);
-    }
-
-    cells.appendChild(cell);
-  }
 }
 
 // ══════════════════════════════════════════════════════════════
